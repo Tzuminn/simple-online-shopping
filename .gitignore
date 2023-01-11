@@ -13,5 +13,9 @@ node_modules
 *.log
 *.gz
 
-# dotenv
+#env
 .env
+
+# file temp
+temp/
+upload/
