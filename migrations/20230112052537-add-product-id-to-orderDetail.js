@@ -4,7 +4,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.addColumn('OrderDetails', 'product_id', {
+    await queryInterface.addColumn('OrderDetails', 'Product_id', {
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {
@@ -15,6 +15,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.removeColumn('OrderDetails', 'product_id')
+    await queryInterface.removeColumn('OrderDetails', 'Product_id')
   }
 }
