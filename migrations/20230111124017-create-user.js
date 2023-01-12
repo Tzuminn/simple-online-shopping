@@ -18,7 +18,8 @@ module.exports = {
         allowNull: false // 新增這句
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false // 新增這句
       },
       phone: {
         type: Sequelize.STRING
