@@ -5,9 +5,9 @@ const admin = require('./modules/admin')
 const products = require('./modules/products')
 const blogs = require('./modules/blogs')
 
-router.use('/admin', admin)
-router.use('/users', users)
-router.use('/products', products)
-router.use('/blogs', blogs)
+router.use('/api/admin', admin)
+router.use('/api/users', users)
+router.use('/api/products', products)
+router.use('/api/blogs', blogs)
 
 module.exports = router
