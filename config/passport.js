@@ -1,8 +1,8 @@
 const passport = require('passport')
-const facebook = require('passport-facebook')
+const FacebookStrategy = require('passport-facebook')
 const LocalStrategy = require('passport-local').Strategy
-const google = require('passport-google-oauth')
-const line = require('passport-line-auth')
+const GoogleStrategy = require('passport-google-oauth')
+const LineStrategy = require('passport-line-auth')
 const bcrypt = require('bcryptjs')
 const passportJWT = require('passport-jwt')
 const JwtStrategy = passportJWT.Strategy
@@ -10,6 +10,7 @@ const ExtractJwt = passportJWT.ExtractJwt
 
 const User = require('../models')
 
+// 本地驗證
 passport.use(new LocalStrategy({
   usernameField: 'email', passReqToCallback: true
 }, async (email, password, cb) => {
@@ -24,6 +25,27 @@ passport.use(new LocalStrategy({
   }
 }
 ))
+
+// FB驗證
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_ID,
+  clientSecret: process.env.FACEBOOK_SECRET,
+  callbackURL: process.env.FACEBOOK_CALLBACK,
+  profileFields: ['email', 'displayName']
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: 'email' })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    await User.create({ name, email, password })
+  } catch (err) {
+    cb(err)
+  }
+})
+)
+
 
 // 解開token的必要資訊
 const jwtOptions = {
@@ -42,8 +64,5 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
     cb(err)
   }
 }))
-
-
-
 
 module.exports = passport
