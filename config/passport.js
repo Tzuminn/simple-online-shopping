@@ -46,6 +46,24 @@ passport.use(new FacebookStrategy({
 })
 )
 
+// GOOGLE驗證
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_ID,
+  clientSecret: process.env.GOOGLE_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: 'email' })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    await User.create({ name, email, password })
+  } catch (err) {
+    cb(err)
+  }
+})
+)
 
 // 解開token的必要資訊
 const jwtOptions = {
