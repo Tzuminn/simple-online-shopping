@@ -1,7 +1,7 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook')
 const LocalStrategy = require('passport-local').Strategy
-const GoogleStrategy = require('passport-google-oauth20')
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 const LineStrategy = require('passport-line-auth')
 const bcrypt = require('bcryptjs')
 const passportJWT = require('passport-jwt')
@@ -57,11 +57,12 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
     const { name, email } = profile._json
-    const user = await User.findOne({ where: 'email' })
+    const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
-    await User.create({ name, email, password })
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
   } catch (err) {
     cb(err)
   }
@@ -79,25 +80,6 @@ passport.use(new LineStrategy({
 }, async (accessToken, refreshToken, profile, cb) => {
   // try {
   console.log(profile)
-  console.log(accessToken)
-  console.log(refreshToken)
-
-  await User.findOne({ where: { id: profile.id } }), function (err, user) {
-    return cb(err, user)
-    //   const { name, email } = profile._json
-    //   const user = await User.findOne({ where: 'email' })
-    //   if (user) return cb(null, user)
-    //   const randomPassword = Math.random.toString(36).slice(-8)
-    //   const password = await bcrypt.hash(randomPassword, 10)
-    //   await User.create({ name, email, password })
-    //   return cb(null, profile)
-    // } catch (err) {
-    //   cb(err)
-    // }
-    // User.findOne({ where: { id: profile.id } }), function (err, user) {
-    //   return cb(err, user)
-    // }
-  }
 }))
 
 // 解開token的必要資訊

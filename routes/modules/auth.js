@@ -30,12 +30,17 @@ router.get(
 )
 
 router.get(
-  '/google/redirect',
+  '/google/callback',
   passport.authenticate('google', {
-    successRedirect: '/',
-    failureRedirect: '/users/login'
-  })
-
+    failureRedirect: '/api/auth/bad'
+  }), (req, res) => {
+    const loginUser = req.user.dataValues
+    delete loginUser.password
+    delete loginUser.id
+    const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    // 不知道為什麼FB的client_id會跑進去?
+    return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+  }
 )
 
 router.get(
@@ -44,7 +49,7 @@ router.get(
 )
 
 router.post(
-  '/line/redirect',
+  '/line/callback',
   passport.authenticate('line', {
     successRedirect: '/',
     failureRedirect: '/users/login'
