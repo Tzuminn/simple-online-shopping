@@ -1,14 +1,14 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook')
 const LocalStrategy = require('passport-local').Strategy
-const GoogleStrategy = require('passport-google-oauth')
+const GoogleStrategy = require('passport-google-oauth20')
 const LineStrategy = require('passport-line-auth')
 const bcrypt = require('bcryptjs')
 const passportJWT = require('passport-jwt')
 const JwtStrategy = passportJWT.Strategy
 const ExtractJwt = passportJWT.ExtractJwt
 
-const User = require('../models')
+const { User } = require('../models')
 
 // 本地驗證
 passport.use(new LocalStrategy({
@@ -34,12 +34,15 @@ passport.use(new FacebookStrategy({
   profileFields: ['email', 'displayName']
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
+    // accessToken不確定是否要傳去前端
+    // 登入錯誤的訊息?
     const { name, email } = profile._json
-    const user = await User.findOne({ where: 'email' })
+    const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
-    await User.create({ name, email, password })
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
   } catch (err) {
     cb(err)
   }
@@ -65,6 +68,38 @@ passport.use(new GoogleStrategy({
 })
 )
 
+// LINE驗證
+passport.use(new LineStrategy({
+  channelID: process.env.LINE_ID,
+  channelSecret: process.env.LINE_SECRET,
+  callbackURL: process.env.LINE_CALLBACK,
+  scope: ['profile', 'openid'],
+  botPrompt: 'normal',
+  uiLocales: 'zh-TW'
+}, async (accessToken, refreshToken, profile, cb) => {
+  // try {
+  console.log(profile)
+  console.log(accessToken)
+  console.log(refreshToken)
+
+  await User.findOne({ where: { id: profile.id } }), function (err, user) {
+    return cb(err, user)
+    //   const { name, email } = profile._json
+    //   const user = await User.findOne({ where: 'email' })
+    //   if (user) return cb(null, user)
+    //   const randomPassword = Math.random.toString(36).slice(-8)
+    //   const password = await bcrypt.hash(randomPassword, 10)
+    //   await User.create({ name, email, password })
+    //   return cb(null, profile)
+    // } catch (err) {
+    //   cb(err)
+    // }
+    // User.findOne({ where: { id: profile.id } }), function (err, user) {
+    //   return cb(err, user)
+    // }
+  }
+}))
+
 // 解開token的必要資訊
 const jwtOptions = {
   // 指定從哪裡取得token
@@ -82,5 +117,16 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
     cb(err)
   }
 }))
+
+passport.serializeUser((user, cb) => {
+  // cb(null, user.id)
+  cb(null, user)
+})
+passport.deserializeUser((id, cb) => {
+  // return User.findByPk(id)
+  //   .then(user => cb(null, user.toJSON()))
+  //   .catch(err => cb(err))
+  return cb(null, id)
+})
 
 module.exports = passport

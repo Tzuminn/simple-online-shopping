@@ -14,6 +14,12 @@ const corsOptions = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization']
 }
+const session = require('express-session')
+app.use(session({
+  secret: 'SESSION_SECRET',
+  resave: false,
+  saveUninitialized: false
+}))
 
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))
