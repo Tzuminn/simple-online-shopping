@@ -6,10 +6,10 @@ const products = require('./modules/products')
 const blogs = require('./modules/blogs')
 const auth = require('./modules/auth')
 
-router.use('/api/admin', admin)
-router.use('/api/users', users)
-router.use('/api/products', products)
-router.use('/api/blogs', blogs)
+router.use('/admin', admin)
+router.use('/users', users)
+router.use('/products', products)
+router.use('/blogs', blogs)
 router.use('/auth', auth)
 
 module.exports = router
