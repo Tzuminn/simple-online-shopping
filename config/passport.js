@@ -5,6 +5,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 const LineStrategy = require('passport-line-auth')
 const bcrypt = require('bcryptjs')
 const passportJWT = require('passport-jwt')
+const jwt = require('jsonwebtoken')
 const JwtStrategy = passportJWT.Strategy
 const ExtractJwt = passportJWT.ExtractJwt
 
@@ -74,12 +75,23 @@ passport.use(new LineStrategy({
   channelID: process.env.LINE_ID,
   channelSecret: process.env.LINE_SECRET,
   callbackURL: process.env.LINE_CALLBACK,
-  scope: ['profile', 'openid'],
+  state: '12345',
+  scope: ['profile', 'openid', 'email'],
   botPrompt: 'normal',
   uiLocales: 'zh-TW'
-}, async (accessToken, refreshToken, profile, cb) => {
-  // try {
-  console.log(profile)
+}, async (accessToken, refreshToken, params, profile, cb) => {
+  try {
+    const userDetails = await jwt.decode(params.id_token)
+    const { name, email } = userDetails
+    const user = await User.findOne({ where: { email } })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
+  } catch (err) {
+    cb(err)
+  }
 }))
 
 // 解開token的必要資訊
@@ -101,13 +113,9 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
 }))
 
 passport.serializeUser((user, cb) => {
-  // cb(null, user.id)
   cb(null, user)
 })
 passport.deserializeUser((id, cb) => {
-  // return User.findByPk(id)
-  //   .then(user => cb(null, user.toJSON()))
-  //   .catch(err => cb(err))
   return cb(null, id)
 })
 
