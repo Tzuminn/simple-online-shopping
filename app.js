@@ -6,6 +6,8 @@ const cors = require('cors')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
+const { faker } = require('@faker-js/faker')
+faker.locale = 'zh_TW'
 
 const corsOptions = {
   origin: [
