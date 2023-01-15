@@ -6,6 +6,7 @@ const cors = require('cors')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
+const session = require('express-session')
 
 const corsOptions = {
   origin: [
@@ -14,6 +15,11 @@ const corsOptions = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization']
 }
+app.use(session({
+  secret: 'SESSION_SECRET',
+  resave: false,
+  saveUninitialized: false
+}))
 
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))
