@@ -6,6 +6,7 @@ const cors = require('cors')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
+
 const session = require('express-session')
 
 const corsOptions = {
