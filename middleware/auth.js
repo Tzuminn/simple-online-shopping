@@ -1,4 +1,4 @@
-// module.exports = {
-//   authenticated,
-//   authenticatedAdmin
-// }
+module.exports = {
+  authenticated,
+  authenticatedAdmin
+}
