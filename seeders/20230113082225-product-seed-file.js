@@ -20,7 +20,7 @@ module.exports = {
         description: text.slice(i * 80 + 1, i * 80 + 80),
         created_at: new Date(),
         updated_at: new Date(),
-        category_id: categories[Math.floor(i / 10)].id
+        Category_id: categories[Math.floor(i / 10)].id
       })), {})
   },
   async down (queryInterface, Sequelize) {
