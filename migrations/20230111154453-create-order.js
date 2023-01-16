@@ -19,7 +19,7 @@ module.exports = {
       purchaser_phone: {
         type: Sequelize.STRING
       },
-      purchase_email: {
+      purchaser_email: {
         type: Sequelize.STRING
       },
       receiver_name: {
