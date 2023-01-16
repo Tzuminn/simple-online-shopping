@@ -13,6 +13,6 @@ module.exports = {
       })), {})
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Deliveries', {})
+    await queryInterface.bulkDelete('Deliveries', null, {})
   }
 }

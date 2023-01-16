@@ -17,6 +17,6 @@ module.exports = {
       })), {})
   },
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Images', {})
+    await queryInterface.bulkDelete('Images', null, {})
   }
 }
