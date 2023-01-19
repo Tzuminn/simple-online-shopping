@@ -35,9 +35,8 @@ passport.use(new FacebookStrategy({
   profileFields: ['email', 'displayName']
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
-    // accessToken不確定是否要傳去前端
-    // 登入錯誤的訊息?
-    console.log('accessToken', accessToken)
+    console.log('user:', profile)
+    console.log('accessToken:', accessToken)
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
