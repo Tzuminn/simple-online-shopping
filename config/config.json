@@ -14,10 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "",
+    "username": "admin",
+    "password": "aceshop2023",
+    "database": "eshop",
+    "host": "eshop.cncvoq5em7jl.ap-northeast-1.rds.amazonaws.com",
     "dialect": "mysql"
   }
 }
