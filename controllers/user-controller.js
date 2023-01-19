@@ -1,11 +1,19 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
+const { validationResult } = require('express-validator')
+const jwt = require('jsonwebtoken')
 
 const userController = {
   postOrders: async (req, res, next) => {
     // 前端傳回的資料
     const { UserId, purchaserName, purchaserPhone, purchaserEmail, receiverName, receiverPhone, receiverAddress, comment, DeliveryId, PaymentId, products } = req.body
+
     try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        const errorMessage = errors.errors.map(e => e.msg)
+        throw new Error(errorMessage)
+      }
       // 訂單重複送出  repeat request，尚未想出怎麼做。
 
       // 產生訂單編號

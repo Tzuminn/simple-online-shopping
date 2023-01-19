@@ -13,7 +13,7 @@ const { User } = require('../models')
 
 // 本地驗證
 passport.use(new LocalStrategy({
-  usernameField: 'email', passReqToCallback: true
+  usernameField: 'email'
 }, async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
@@ -22,7 +22,7 @@ passport.use(new LocalStrategy({
     if (!passwordChecked) throw new Error('帳號或密碼錯誤!')
     return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err)
   }
 }
 ))

@@ -1,3 +1,7 @@
+const jwt = require('jsonwebtoken')
+const { Product, Image } = require('../models')
+const imgurFileHandler = require('../helpers/file-helpers')
+
 const adminController = {
   login: async (req, res, next) => {
 
@@ -12,7 +16,10 @@ const adminController = {
 
   },
   postProduct: async (req, res, next) => {
-
+    try {
+    } catch (err) {
+      next(err)
+    }
   },
   getOrders: async (req, res, next) => {
 
