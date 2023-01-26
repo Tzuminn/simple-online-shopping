@@ -14,7 +14,7 @@
     "dialect": "mysql"
   },
   "production": {
-    "use_env_variable": "MYSQL_DB_HOST",     
+    "use_env_variable": "MYSQL_DB_HOST",
     "dialect": "mysql"
   }
 }
