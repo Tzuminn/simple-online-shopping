@@ -9,14 +9,14 @@ const app = express()
 const port = process.env.PORT || 3000
 
 const corsOptions = {
-  origin: [
-    'http://localhost:3000/'
-  ],
+  // origin: [
+  //   'http://localhost:3000/'
+  // ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 app.use(session({
-  secret: 'SESSION_SECRET',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }))

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "production": "cross-env NODE_ENV=production nodemon app.js",
     "lint": "eslint \"**/*.js\" --fix"
   },
   "keywords": [],
