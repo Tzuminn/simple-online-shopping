@@ -6,11 +6,11 @@ const adminController = require('../../controllers/admin-controller')
 
 router.post('/login', adminController.login)
 
-router.put('/products/edit/:id',  adminController.putProduct)
-router.delete('/products/delete/:id',  adminController.deleteProduct)
-router.get('/products',  adminController.getProducts)
-router.post('/products',  adminController.postProduct)
+router.put('/products/edit/:id', adminController.putProduct)
+router.delete('/products/delete/:id', adminController.deleteProduct)
+router.get('/products', adminController.getProducts)
+router.post('/products', adminController.postProduct)
 
-router.get('/orders ',  adminController.getOrders)
+router.get('/orders ', adminController.getOrders)
 
 module.exports = router
