@@ -12,8 +12,9 @@ const corsOptions = {
   // origin: [
   //   'http://localhost:3000/'
   // ],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization']
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
+  // allowedHeaders: ['Content-Type', 'Authorization']
 }
 app.use(session({
   secret: process.env.SESSION_SECRET,
