@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000
 const corsOptions = {
   origin: [
     'http://localhost:3000/',
-    'https://beark0515.github.io/pets-store/'
+    'https://beark0515.github.io'
   ],
   optionsSuccessStatus: 200, // For legacy browser support
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
