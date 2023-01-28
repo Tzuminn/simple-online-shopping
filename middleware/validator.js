@@ -9,6 +9,7 @@ module.exports = {
       }),
     body('receiverAddress').isLength({ min: 6, max: 50 }).withMessage('收件人地址不可為空白。長度在6~50字之間。')
   ],
+  // 新增商品的錯誤驗證，但似乎MIN寫的方式不能用這個
   CreateValidator: [
     body('name').isLength({ min: 2, max: 10 }).withMessage('輸入無效'),
     body('price').isNumeric().withMessage('輸入無效')
