@@ -2,7 +2,7 @@
   "name": "simple-online-shopping",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  
   "scripts": {
     "start": "node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
