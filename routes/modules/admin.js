@@ -10,6 +10,7 @@ const adminController = require('../../controllers/admin-controller')
 
 router.put('/products/edit/:id', adminController.putProduct)
 router.delete('/products/delete/:id', adminController.deleteProduct)
+router.get('/products', authenticatedAdmin, adminController.getProducts)
 router.post('/products', upload.array('url', 6), adminController.postProduct)
 
 router.get('/orders ', adminController.getOrders)
