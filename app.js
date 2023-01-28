@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 const express = require('express')
+const session = require('express-session')
 const cors = require('cors')
 const routes = require('./routes')
 const app = express()
@@ -14,6 +15,11 @@ const corsOptions = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization']
 }
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
 
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))

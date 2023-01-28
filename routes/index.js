@@ -4,10 +4,23 @@ const users = require('./modules/users')
 const admin = require('./modules/admin')
 const products = require('./modules/products')
 const blogs = require('./modules/blogs')
+const auth = require('./modules/auth')
+const { generalErrorHandler } = require('../middleware/error-handler')
 
-router.use('/api/admin', admin)
-router.use('/api/users', users)
-router.use('/api/products', products)
-router.use('/api/blogs', blogs)
+router.use('/admin', admin)
+router.use('/users', users)
+router.use('/products', products)
+router.use('/blogs', blogs)
+router.use('/auth', auth)
+
+router.use('/', (_, res, next) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Page not found'
+  })
+  next()
+})
+
+router.use('/', generalErrorHandler)
 
 module.exports = router
