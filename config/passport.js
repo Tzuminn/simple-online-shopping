@@ -13,8 +13,10 @@ const { User } = require('../models')
 
 // 本地驗證
 passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, async (email, password, cb) => {
+  usernameField: 'email',
+  passwordField: 'password'
+},
+async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
     if (!user) throw new Error('帳號不存在!')
@@ -22,7 +24,7 @@ passport.use(new LocalStrategy({
     if (!passwordChecked) throw new Error('帳號或密碼錯誤!')
     return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err, false)
   }
 }
 ))
@@ -35,8 +37,6 @@ passport.use(new FacebookStrategy({
   profileFields: ['email', 'displayName']
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
-    console.log('user:', profile)
-    console.log('accessToken:', accessToken)
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
@@ -52,47 +52,47 @@ passport.use(new FacebookStrategy({
 
 // GOOGLE驗證
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_ID,
-  clientSecret: process.env.GOOGLE_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK
-}, async (accessToken, refreshToken, profile, cb) => {
-  try {
-    const { name, email } = profile._json
-    const user = await User.findOne({ where: { email } })
-    if (user) return cb(null, user)
-    const randomPassword = Math.random.toString(36).slice(-8)
-    const password = await bcrypt.hash(randomPassword, 10)
-    const userRegistered = await User.create({ name, email, password })
-    return cb(null, userRegistered)
-  } catch (err) {
-    cb(err)
-  }
-})
-)
+   clientID: process.env.GOOGLE_ID,
+   clientSecret: process.env.GOOGLE_SECRET,
+   callbackURL: process.env.GOOGLE_CALLBACK
+ }, async (accessToken, refreshToken, profile, cb) => {
+   try {
+     const { name, email } = profile._json
+     const user = await User.findOne({ where: { email } })
+     if (user) return cb(null, user)
+     const randomPassword = Math.random.toString(36).slice(-8)
+     const password = await bcrypt.hash(randomPassword, 10)
+     const userRegistered = await User.create({ name, email, password })
+     return cb(null, userRegistered)
+   } catch (err) {
+     cb(err)
+   }
+ })
+ )
 
 // LINE驗證
-passport.use(new LineStrategy({
-  channelID: process.env.LINE_ID,
-  channelSecret: process.env.LINE_SECRET,
-  callbackURL: process.env.LINE_CALLBACK,
-  state: '12345',
-  scope: ['profile', 'openid', 'email'],
-  botPrompt: 'normal',
-  uiLocales: 'zh-TW'
-}, async (accessToken, refreshToken, params, profile, cb) => {
-  try {
-    const userDetails = await jwt.decode(params.id_token)
-    const { name, email } = userDetails
-    const user = await User.findOne({ where: { email } })
-    if (user) return cb(null, user)
-    const randomPassword = Math.random.toString(36).slice(-8)
-    const password = await bcrypt.hash(randomPassword, 10)
-    const userRegistered = await User.create({ name, email, password })
-    return cb(null, userRegistered)
-  } catch (err) {
-    cb(err)
-  }
-}))
+ passport.use(new LineStrategy({
+   channelID: process.env.LINE_ID,
+   channelSecret: process.env.LINE_SECRET,
+   callbackURL: process.env.LINE_CALLBACK,
+   state: '12345',
+   scope: ['profile', 'openid', 'email'],
+   botPrompt: 'normal',
+   uiLocales: 'zh-TW'
+ }, async (accessToken, refreshToken, params, profile, cb) => {
+   try {
+     const userDetails = await jwt.decode(params.id_token)
+     const { name, email } = userDetails
+     const user = await User.findOne({ where: { email } })
+     if (user) return cb(null, user)
+     const randomPassword = Math.random.toString(36).slice(-8)
+     const password = await bcrypt.hash(randomPassword, 10)
+     const userRegistered = await User.create({ name, email, password })
+     return cb(null, userRegistered)
+   } catch (err) {
+     cb(err)
+   }
+ }))
 
 // 解開token的必要資訊
 const jwtOptions = {
@@ -108,7 +108,7 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
     const user = await User.findByPk(jwtPayload.id)
     if (user) return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err, false)
   }
 }))
 
