@@ -1,5 +1,6 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
+const jwt = require('jsonwebtoken')
 
 const userController = {
   postOrders: async (req, res, next) => {
