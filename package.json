@@ -33,7 +33,8 @@
     "passport-line-auth": "^0.2.9",
     "passport-local": "^1.0.0",
     "sequelize": "^6.28.0",
-    "sequelize-cli": "^6.5.2"
+    "sequelize-cli": "^6.5.2",
+    "tslib": "^2.4.1"
   },
   "devDependencies": {
     "eslint": "^8.31.0",

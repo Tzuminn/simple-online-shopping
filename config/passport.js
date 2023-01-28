@@ -13,8 +13,10 @@ const { User } = require('../models')
 
 // 本地驗證
 passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, async (email, password, cb) => {
+  usernameField: 'email',
+  passwordField: 'password'
+},
+async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
     if (!user) throw new Error('帳號不存在!')
@@ -22,7 +24,7 @@ passport.use(new LocalStrategy({
     if (!passwordChecked) throw new Error('帳號或密碼錯誤!')
     return cb(null, user)
   } catch (err) {
-    return cb(err)
+    return cb(err, false)
   }
 }
 ))
@@ -35,8 +37,6 @@ passport.use(new FacebookStrategy({
   profileFields: ['email', 'displayName']
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
-    console.log('user:', profile)
-    console.log('accessToken:', accessToken)
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
@@ -108,7 +108,7 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
     const user = await User.findByPk(jwtPayload.id)
     if (user) return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err, false)
   }
 }))
 

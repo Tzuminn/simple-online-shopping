@@ -1,7 +1,7 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
 const { validationResult } = require('express-validator')
-const jwt = require('jsonwebtoken')
+// const jwt = require('jsonwebtoken')
 
 const userController = {
   postOrders: async (req, res, next) => {
@@ -56,8 +56,8 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-        { model: Payment, attributes: ['type'] },
-        { model: Delivery, attributes: ['type'] }],
+          { model: Payment, attributes: ['type'] },
+          { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
