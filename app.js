@@ -14,8 +14,8 @@ const corsOptions = {
     'https://beark0515.github.io'
   ],
   optionsSuccessStatus: 200, // For legacy browser support
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
-  // allowedHeaders: ['Content-Type', 'Authorization']
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization']
 }
 app.use(session({
   secret: process.env.SESSION_SECRET,
