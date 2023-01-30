@@ -61,6 +61,8 @@ const userController = {
         raw: true,
         nest: true
       })
+      // 訂單不存在
+      if (!user) throw new Error('訂單不存在')
       const products = await OrderDetail.findAll({
         where: {
           OrderId: user.id
