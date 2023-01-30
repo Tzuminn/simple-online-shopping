@@ -56,11 +56,13 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
+      // 訂單不存在
+      if (!user) throw new Error('訂單不存在')
       const products = await OrderDetail.findAll({
         where: {
           OrderId: user.id
