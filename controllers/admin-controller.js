@@ -81,7 +81,20 @@ const adminController = {
     }
   },
   deleteProduct: async (req, res, next) => {
+    try {
+      const theProductId = req.params.id
+      // 刪除產品照片
+      await Image.destroy({ where: { Product_id: theProductId } })
 
+      // 刪除產品
+      const theProduct = await Product.findByPk(theProductId)
+      if (!theProduct) throw new Error('此產品不存在!')
+      await theProduct.destroy()
+
+      res.status(200).json({ status: 'success' })
+    } catch (err) {
+      next(err)
+    }
   },
   postProduct: async (req, res, next) => {
     try {

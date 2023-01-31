@@ -30,69 +30,69 @@ async (email, password, cb) => {
 ))
 
 // FB驗證
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_ID,
-  clientSecret: process.env.FACEBOOK_SECRET,
-  callbackURL: process.env.FACEBOOK_CALLBACK,
-  profileFields: ['email', 'displayName']
-}, async (accessToken, refreshToken, profile, cb) => {
-  try {
-    const { name, email } = profile._json
-    const user = await User.findOne({ where: { email } })
-    if (user) return cb(null, user)
-    const randomPassword = Math.random.toString(36).slice(-8)
-    const password = await bcrypt.hash(randomPassword, 10)
-    const userRegistered = await User.create({ name, email, password })
-    return cb(null, userRegistered)
-  } catch (err) {
-    cb(err)
-  }
-})
-)
+// passport.use(new FacebookStrategy({
+//   clientID: process.env.FACEBOOK_ID,
+//   clientSecret: process.env.FACEBOOK_SECRET,
+//   callbackURL: process.env.FACEBOOK_CALLBACK,
+//   profileFields: ['email', 'displayName']
+// }, async (accessToken, refreshToken, profile, cb) => {
+//   try {
+//     const { name, email } = profile._json
+//     const user = await User.findOne({ where: { email } })
+//     if (user) return cb(null, user)
+//     const randomPassword = Math.random.toString(36).slice(-8)
+//     const password = await bcrypt.hash(randomPassword, 10)
+//     const userRegistered = await User.create({ name, email, password })
+//     return cb(null, userRegistered)
+//   } catch (err) {
+//     cb(err)
+//   }
+// })
+// )
 
 // GOOGLE驗證
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_ID,
-  clientSecret: process.env.GOOGLE_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK
-}, async (accessToken, refreshToken, profile, cb) => {
-  try {
-    const { name, email } = profile._json
-    const user = await User.findOne({ where: { email } })
-    if (user) return cb(null, user)
-    const randomPassword = Math.random.toString(36).slice(-8)
-    const password = await bcrypt.hash(randomPassword, 10)
-    const userRegistered = await User.create({ name, email, password })
-    return cb(null, userRegistered)
-  } catch (err) {
-    cb(err)
-  }
-})
-)
+// passport.use(new GoogleStrategy({
+//   clientID: process.env.GOOGLE_ID,
+//   clientSecret: process.env.GOOGLE_SECRET,
+//   callbackURL: process.env.GOOGLE_CALLBACK
+// }, async (accessToken, refreshToken, profile, cb) => {
+//   try {
+//     const { name, email } = profile._json
+//     const user = await User.findOne({ where: { email } })
+//     if (user) return cb(null, user)
+//     const randomPassword = Math.random.toString(36).slice(-8)
+//     const password = await bcrypt.hash(randomPassword, 10)
+//     const userRegistered = await User.create({ name, email, password })
+//     return cb(null, userRegistered)
+//   } catch (err) {
+//     cb(err)
+//   }
+// })
+// )
 
 // LINE驗證
-passport.use(new LineStrategy({
-  channelID: process.env.LINE_ID,
-  channelSecret: process.env.LINE_SECRET,
-  callbackURL: process.env.LINE_CALLBACK,
-  state: '12345',
-  scope: ['profile', 'openid', 'email'],
-  botPrompt: 'normal',
-  uiLocales: 'zh-TW'
-}, async (accessToken, refreshToken, params, profile, cb) => {
-  try {
-    const userDetails = await jwt.decode(params.id_token)
-    const { name, email } = userDetails
-    const user = await User.findOne({ where: { email } })
-    if (user) return cb(null, user)
-    const randomPassword = Math.random.toString(36).slice(-8)
-    const password = await bcrypt.hash(randomPassword, 10)
-    const userRegistered = await User.create({ name, email, password })
-    return cb(null, userRegistered)
-  } catch (err) {
-    cb(err)
-  }
-}))
+// passport.use(new LineStrategy({
+//   channelID: process.env.LINE_ID,
+//   channelSecret: process.env.LINE_SECRET,
+//   callbackURL: process.env.LINE_CALLBACK,
+//   state: '12345',
+//   scope: ['profile', 'openid', 'email'],
+//   botPrompt: 'normal',
+//   uiLocales: 'zh-TW'
+// }, async (accessToken, refreshToken, params, profile, cb) => {
+//   try {
+//     const userDetails = await jwt.decode(params.id_token)
+//     const { name, email } = userDetails
+//     const user = await User.findOne({ where: { email } })
+//     if (user) return cb(null, user)
+//     const randomPassword = Math.random.toString(36).slice(-8)
+//     const password = await bcrypt.hash(randomPassword, 10)
+//     const userRegistered = await User.create({ name, email, password })
+//     return cb(null, userRegistered)
+//   } catch (err) {
+//     cb(err)
+//   }
+// }))
 
 // 解開token的必要資訊
 const jwtOptions = {
