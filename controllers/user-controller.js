@@ -1,7 +1,7 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
 const { validationResult } = require('express-validator')
-// const jwt = require('jsonwebtoken')
+const { transporter } = require('../middleware/sendEmail')
 
 const userController = {
   postOrders: async (req, res, next) => {
@@ -12,6 +12,7 @@ const userController = {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
         const errorMessage = errors.errors.map(e => e.msg)
+        console.log(errorMessage)
         throw new Error(errorMessage)
       }
       // 訂單重複送出  repeat request，尚未想出怎麼做。
@@ -46,6 +47,17 @@ const userController = {
 
       // OrderDetail資料庫
       await OrderDetail.bulkCreate(products, { updateOnDuplicate: ['ProductId', 'orderQuantity', 'OrderId'] })
+
+      // Email寄送
+      await transporter.sendMail(({
+        from: process.env.EMAIL_ACCOUNT,
+        to: purchaserEmail,
+        subject: '您的訂單已成立(請勿回覆，信件為自動寄送)',
+        html: `<p>親愛的顧客 ${purchaserName} 您好，您的訂單<b>${orderNumber}</b>已成立。</p>` + `<br>` + `<span>感謝您訂購<b>寵物購物網</b>的商品，歡迎您再度光臨！</span>`
+      }), (err, info) => {
+        if (err) throw new Error(err)
+      })
+
       return res.status(200).json({ status: 'success', orderNumber })
     } catch (err) { next(err) }
   },
@@ -56,8 +68,8 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
@@ -85,5 +97,4 @@ const userController = {
     }
   }
 }
-
 module.exports = userController
