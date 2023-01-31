@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router()
 
 const upload = require('../../middleware/multer')
-// const passport = require('../../config/passport')
+const passport = require('../../config/passport')
 const adminController = require('../../controllers/admin-controller')
 // const { authenticated, authenticatedAdmin } = require('../../middleware/auth')
 
-// router.post('/login', passport.authenticate('local', { session: false }), adminController.login)
+router.post('/login', passport.authenticate('local', { session: false }), adminController.login)
 
 router.put('/products/edit/:id', adminController.putProduct)
 router.delete('/products/delete/:id', adminController.deleteProduct)
