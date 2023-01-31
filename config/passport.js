@@ -30,28 +30,26 @@ async (email, password, cb) => {
 }
 ))
 
-// // FB驗證
-// passport.use(new FacebookStrategy({
-//   clientID: process.env.FACEBOOK_ID,
-//   clientSecret: process.env.FACEBOOK_SECRET,
-//   callbackURL: process.env.FACEBOOK_CALLBACK,
-//   profileFields: ['email', 'displayName']
-// }, async (accessToken, refreshToken, profile, cb) => {
-//   try {
-//     // accessToken不確定是否要傳去前端
-//     // 登入錯誤的訊息?
-//     const { name, email } = profile._json
-//     const user = await User.findOne({ where: { email } })
-//     if (user) return cb(null, user)
-//     const randomPassword = Math.random.toString(36).slice(-8)
-//     const password = await bcrypt.hash(randomPassword, 10)
-//     const userRegistered = await User.create({ name, email, password })
-//     return cb(null, userRegistered)
-//   } catch (err) {
-//     cb(err)
-//   }
-// })
-// )
+// FB驗證
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_ID,
+  clientSecret: process.env.FACEBOOK_SECRET,
+  callbackURL: process.env.FACEBOOK_CALLBACK,
+  profileFields: ['email', 'displayName']
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: { email } })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
+  } catch (err) {
+    cb(err)
+  }
+})
+)
 
 // // GOOGLE驗證
 // passport.use(new GoogleStrategy({

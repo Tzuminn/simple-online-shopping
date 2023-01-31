@@ -116,24 +116,19 @@ const adminController = {
         isCover: 1
       }, {
         url: ProductImgUpload[1],
-        ProductId: productData.id,
-        isCover: 0
+        ProductId: productData.id
       }, {
         url: ProductImgUpload[2],
-        ProductId: productData.id,
-        isCover: 0
+        ProductId: productData.id
       }, {
         url: ProductImgUpload[3],
-        ProductId: productData.id,
-        isCover: 0
+        ProductId: productData.id
       }, {
         url: ProductImgUpload[4],
-        ProductId: productData.id,
-        isCover: 0
+        ProductId: productData.id
       }, {
         url: ProductImgUpload[5],
-        ProductId: productData.id,
-        isCover: 0
+        ProductId: productData.id
       }])
 
       res.status(200).json({ product: productData, image: productImgData })
