@@ -53,7 +53,7 @@ const userController = {
         from: process.env.EMAIL_ACCOUNT,
         to: purchaserEmail,
         subject: '您的訂單已成立(請勿回覆，信件為自動寄送)',
-        html: `<p>親愛的顧客 ${purchaserName} 您好，您的訂單<b>${orderNumber}</b>已成立。</p>` + `<br>` + `<span>感謝您訂購<b>寵物購物網</b>的商品，歡迎您再度光臨！</span>`
+        html: `<p>親愛的顧客 ${purchaserName} 您好，您的訂單<b>${orderNumber}</b>已成立。</p>` + '<br>' + '<span>感謝您訂購<b>寵物購物網</b>的商品，歡迎您再度光臨！</span>'
       }), (err, info) => {
         if (err) throw new Error(err)
       })
@@ -68,8 +68,8 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-        { model: Payment, attributes: ['type'] },
-        { model: Delivery, attributes: ['type'] }],
+          { model: Payment, attributes: ['type'] },
+          { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
