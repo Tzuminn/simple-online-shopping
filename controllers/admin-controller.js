@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { Product, Image } = require('../models')
+const { Product, Image, User, Order, OrderDetail, sequelize, Payment, Delivery } = require('../models')
 const imgurFileHandler = require('../helpers/file-helpers')
 
 const adminController = {
@@ -149,8 +149,40 @@ const adminController = {
       next(err)
     }
   },
-  getOrders: async (req, res, next) => {
+  getOrder: async (req, res, next) => {
+    try {
+      const orderNumber = req.query.id
+      const user = await Order.findOne({
+        where: { orderNumber },
+        attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
+        include: [{ model: User, attributes: ['name'] },
+          { model: Payment, attributes: ['type'] },
+          { model: Delivery, attributes: ['type'] }],
+        raw: true,
+        nest: true
+      })
+      if (!user) throw new Error('訂單不存在')
 
+      const products = await OrderDetail.findAll({
+        where: {
+          OrderId: user.id
+        },
+        attributes: {
+          exclude: ['OrderId', 'ProductId'],
+          include: [
+            [sequelize.literal('(SELECT IFNULL(SUM(orderQuantity*Products.price),0) FROM Products WHERE OrderDetail.Product_id = Products.id)'), 'subTotal']
+          ]
+        },
+        include: [
+          { model: Product, attributes: ['name', 'price'] }],
+        raw: true,
+        nest: true
+      })
+      user.products = products
+      return res.status(200).json(user)
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
