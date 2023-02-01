@@ -12,7 +12,6 @@ const userController = {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
         const errorMessage = errors.errors.map(e => e.msg)
-        console.log(errorMessage)
         throw new Error(errorMessage)
       }
       // 訂單重複送出  repeat request，尚未想出怎麼做。
