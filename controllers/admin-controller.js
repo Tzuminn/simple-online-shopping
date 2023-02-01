@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { Product, Image, User, Order, OrderDetail, sequelize, Payment, Delivery } = require('../models')
 const imgurFileHandler = require('../helpers/file-helpers')
-const dayjs = require('dayjs')
 
 const adminController = {
   login: async (req, res, next) => {
@@ -11,10 +10,8 @@ const adminController = {
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
       res.json({
         status: 'success',
-        data: {
-          token,
-          user: userData
-        }
+        token,
+        user: userData
       })
     } catch (err) {
       next(err)

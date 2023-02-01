@@ -15,7 +15,6 @@ const blogController = {
           createdAt: new Date(),
           updatedAt: new Date()
         }))
-      console.log(blogData)
       return res.status(200).json(blogData)
     } catch (err) { next(err) }
   }
