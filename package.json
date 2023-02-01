@@ -2,10 +2,10 @@
   "name": "simple-online-shopping",
   "version": "1.0.0",
   "description": "",
-  
   "scripts": {
     "start": "node app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "production": "cross-env NODE_ENV=production nodemon app.js",
     "lint": "eslint \"**/*.js\" --fix"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
+    "aws-sdk": "^2.1304.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
