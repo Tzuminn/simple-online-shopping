@@ -3,10 +3,10 @@ const router = express.Router()
 const { OrderValidator } = require('../../middleware/validator')
 
 const userController = require('../../controllers/user-controller')
-// const { authenticated } = require('../../middleware/auth')
+const { authenticated } = require('../../middleware/auth')
 
-router.post('/orders',  OrderValidator, userController.postOrders)
+router.post('/orders', authenticated, OrderValidator, userController.postOrders)
 // 訂單查詢
-router.get('/orders',  userController.getOrders)
+router.get('/orders', authenticated, userController.getOrders)
 
 module.exports = router
