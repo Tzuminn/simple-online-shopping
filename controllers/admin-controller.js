@@ -188,7 +188,7 @@ const adminController = {
   getOrders: async (req, res, next) => {
     try {
       const allOrders = await Order.findAll({
-        attributes: ['orderNumber', 'createdAt'],
+        attributes: ['id', 'orderNumber', 'createdAt'],
         raw: true,
         nest: true
       })
