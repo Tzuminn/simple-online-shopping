@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { Product, Image, User, Order, OrderDetail, sequelize, Payment, Delivery } = require('../models')
 const imgurFileHandler = require('../helpers/file-helpers')
+const dayjs = require('dayjs')
 
 const adminController = {
   login: async (req, res, next) => {
@@ -180,6 +181,18 @@ const adminController = {
       })
       user.products = products
       return res.status(200).json(user)
+    } catch (err) {
+      next(err)
+    }
+  },
+  getOrders: async (req, res, next) => {
+    try {
+      const allOrders = await Order.findAll({
+        attributes: ['orderNumber', 'createdAt'],
+        raw: true,
+        nest: true
+      })
+      res.status(200).json({ orders: allOrders })
     } catch (err) {
       next(err)
     }
