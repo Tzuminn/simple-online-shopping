@@ -1,7 +1,7 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
 const { validationResult } = require('express-validator')
-// const jwt = require('jsonwebtoken')
+const { transporter } = require('../middleware/sendEmail')
 
 const userController = {
   postOrders: async (req, res, next) => {
@@ -46,6 +46,20 @@ const userController = {
 
       // OrderDetail資料庫
       await OrderDetail.bulkCreate(products, { updateOnDuplicate: ['ProductId', 'orderQuantity', 'OrderId'] })
+
+      // Email寄送
+      await transporter.sendMail(({
+        from: process.env.EMAIL_ACCOUNT,
+        to: purchaserEmail,
+        subject: '您的訂單已成立(請勿回覆，信件為自動寄送)',
+        html: `<p>親愛的顧客 ${purchaserName} 您好，您的訂單<b>${orderNumber}</b>已成立。</p>` + '<br>' + '<span>感謝您訂購<b>寵物購物網</b>的商品，歡迎您再度光臨！test 1</span>'
+      }), (err, info) => {
+        if (err) {
+          return console.log(err)
+        }
+        console.log('Message %s sent: %s', info.response)
+      })
+
       return res.status(200).json({ status: 'success', orderNumber })
     } catch (err) { next(err) }
   },
@@ -85,5 +99,4 @@ const userController = {
     }
   }
 }
-
 module.exports = userController
