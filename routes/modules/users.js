@@ -7,6 +7,6 @@ const { authenticated } = require('../../middleware/auth')
 
 router.post('/orders', authenticated, OrderValidator, userController.postOrders)
 // 訂單查詢
-router.get('/orders/', authenticated, userController.getOrders)
+router.get('/orders', authenticated, userController.getOrders)
 
 module.exports = router
