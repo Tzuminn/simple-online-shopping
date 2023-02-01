@@ -1,20 +1,27 @@
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { Product, Image, User, Order, OrderDetail, sequelize, Payment, Delivery } = require('../models')
 const imgurFileHandler = require('../helpers/file-helpers')
-const dayjs = require('dayjs')
 
 const adminController = {
   login: async (req, res, next) => {
     try {
+      const { email, password } = req.body
+      const admin = await User.findOne({
+        where: { email, isAdmin: 1 },
+        attributes: ['id', 'name', 'email', 'password', 'isAdmin']
+      })
+      if (!admin) return res.status(401).json({ status: 'error', message: '帳號不存在' })
+      const correctPassword = await bcrypt.compare(password, admin.password)
+      if (!correctPassword) return res.status(401).json({ status: 'error', message: '密碼錯誤' })
+
       const userData = req.user.toJSON()
       delete userData.password
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
       res.json({
         status: 'success',
-        data: {
-          token,
-          user: userData
-        }
+        token,
+        user: userData
       })
     } catch (err) {
       next(err)
