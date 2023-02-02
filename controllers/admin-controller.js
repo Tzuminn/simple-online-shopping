@@ -97,7 +97,9 @@ const adminController = {
       // 刪除產品
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
-      await theProduct.destroy()
+      await theProduct.update({
+        isOnShelves: 0
+      })
 
       res.status(200).json({ status: 'success' })
     } catch (err) {
@@ -137,19 +139,24 @@ const adminController = {
         isCover: 1
       }, {
         url: ProductImgUpload[1],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[2],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[3],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[4],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[5],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }])
 
       res.status(200).json({ product: productData, image: productImgData })
