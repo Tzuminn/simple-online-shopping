@@ -10,9 +10,9 @@ router.post('/login', passport.authenticate('local', { session: false }), adminC
 
 router.put('/products/edit/:id', authenticated, authenticatedAdmin, adminController.putProduct)
 router.delete('/products/delete/:id', authenticated, authenticatedAdmin, adminController.deleteProduct)
-router.post('/products', upload.array('url', 6), authenticated, authenticatedAdmin, adminController.postProduct)
+router.post('/products', authenticated, authenticatedAdmin, upload.array('url', 6), adminController.postProduct)
 
 router.get('/orders', authenticated, authenticatedAdmin, adminController.getOrders)
-router.get('/detail/', adminController.getOrder)
+router.get('/detail/', authenticated, authenticatedAdmin, adminController.getOrder)
 
 module.exports = router
