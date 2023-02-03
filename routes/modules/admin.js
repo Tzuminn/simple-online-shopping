@@ -12,7 +12,7 @@ router.put('/products/edit/:id', authenticated, authenticatedAdmin, adminControl
 router.delete('/products/delete/:id', authenticated, authenticatedAdmin, adminController.deleteProduct)
 router.post('/products', upload.array('url', 6), authenticated, authenticatedAdmin, adminController.postProduct)
 
-router.get('/orders', adminController.getOrders)
+router.get('/orders', authenticated, authenticatedAdmin, adminController.getOrders)
 router.get('/detail/', adminController.getOrder)
 
 module.exports = router

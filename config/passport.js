@@ -15,8 +15,7 @@ const { User } = require('../models')
 passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
-},
-async (email, password, cb) => {
+}, async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
     if (!user) {
@@ -34,8 +33,7 @@ async (email, password, cb) => {
   } catch (err) {
     return cb(err, false)
   }
-}
-))
+}))
 
 // FB驗證
 passport.use(new FacebookStrategy({
@@ -47,10 +45,15 @@ passport.use(new FacebookStrategy({
   try {
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
+    const token = jwt.sign(user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    user.dataValues.tokenA = token
+    console.log('已存在:', user)
     if (user) return cb(null, user)
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
     const userRegistered = await User.create({ name, email, password })
+    const tokenB = 'asdf'
+    console.log('新註冊:', userRegistered, tokenB)
     return cb(null, userRegistered)
   } catch (err) {
     cb(err)
