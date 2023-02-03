@@ -5,7 +5,7 @@ const imgurFileHandler = require('../helpers/file-helpers')
 
 const adminController = {
   login: async (req, res, next) => {
-    try {      
+    try {
       const userData = req.user.toJSON()
       delete userData.password
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
