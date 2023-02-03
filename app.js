@@ -28,8 +28,21 @@ app.use(session({
 //   allowedHeaders: ['Content-Type', 'Authorization']
 // }
 
-// app.use(cors(corsOptions))
-app.use(cors())
+const allowedOrigins = ['https://beark0515.github.io', 'http://localhost:3000']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use('/api', routes)
