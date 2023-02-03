@@ -17,9 +17,17 @@ passport.use(new LocalStrategy({
 }, async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
-    if (!user) throw new Error('帳號不存在!')
+    if (!user) {
+      const err = new Error('帳號或密碼錯誤!')
+      err.status = 401
+      throw err
+    }
     const passwordChecked = await bcrypt.compare(password, user.password)
-    if (!passwordChecked) throw new Error('帳號或密碼錯誤!')
+    if (!passwordChecked) {
+      const err = new Error('帳號或密碼錯誤!')
+      err.status = 401
+      throw err
+    }
     return cb(null, user)
   } catch (err) {
     cb(err)
