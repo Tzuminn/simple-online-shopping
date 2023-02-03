@@ -8,23 +8,27 @@ const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
 
-// const corsOptions = {
-//   origin: [
-//     'http://localhost:3000/',
-//     'https://beark0515.github.io'
-//   ],
-//   optionsSuccessStatus: 200, // For legacy browser support
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }))
 
-// app.use(cors(corsOptions))
-app.use(cors())
+const allowedOrigins = ['https://beark0515.github.io', 'http://localhost:3000']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use('/api', routes)
