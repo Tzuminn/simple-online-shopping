@@ -11,17 +11,16 @@ const adminController = {
         where: { email, isAdmin: 1 },
         attributes: ['id', 'name', 'email', 'password', 'isAdmin']
       })
-      if (!admin) return res.status(401).json({ status: 'error', message: '帳號不存在' })
-      const correctPassword = await bcrypt.compare(password, admin.password)
-      if (!correctPassword) return res.status(401).json({ status: 'error', message: '密碼錯誤' })
-
+      
       const userData = req.user.toJSON()
       delete userData.password
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
       res.json({
         status: 'success',
-        token,
-        user: userData
+        data: {
+          token,
+          user: userData
+        }
       })
     } catch (err) {
       next(err)
@@ -97,7 +96,9 @@ const adminController = {
       // 刪除產品
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
-      await theProduct.destroy()
+      await theProduct.update({
+        isOnShelves: 0
+      })
 
       res.status(200).json({ status: 'success' })
     } catch (err) {
@@ -137,19 +138,24 @@ const adminController = {
         isCover: 1
       }, {
         url: ProductImgUpload[1],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[2],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[3],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[4],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }, {
         url: ProductImgUpload[5],
-        ProductId: productData.id
+        ProductId: productData.id,
+        isCover: 0
       }])
 
       res.status(200).json({ product: productData, image: productImgData })
