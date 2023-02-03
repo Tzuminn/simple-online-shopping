@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { Product, Image, User, Order, OrderDetail, sequelize, Payment, Delivery } = require('../models')
 const imgurFileHandler = require('../helpers/file-helpers')

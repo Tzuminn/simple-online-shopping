@@ -97,6 +97,9 @@ const userController = {
     } catch (err) {
       next(err)
     }
+  },
+  getUserTokenStatus: async (_, res) => {
+    res.status(200).json({ status: 'success' })
   }
 }
 module.exports = userController
