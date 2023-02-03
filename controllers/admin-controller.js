@@ -11,10 +11,7 @@ const adminController = {
         where: { email, isAdmin: 1 },
         attributes: ['id', 'name', 'email', 'password', 'isAdmin']
       })
-      if (!admin) return res.status(401).json({ status: 'error', message: '帳號不存在' })
-      const correctPassword = await bcrypt.compare(password, admin.password)
-      if (!correctPassword) return res.status(401).json({ status: 'error', message: '密碼錯誤' })
-
+      
       const userData = req.user.toJSON()
       delete userData.password
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
