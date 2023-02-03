@@ -20,8 +20,10 @@ const adminController = {
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
       res.json({
         status: 'success',
-        token,
-        user: userData
+        data: {
+          token,
+          user: userData
+        }
       })
     } catch (err) {
       next(err)
