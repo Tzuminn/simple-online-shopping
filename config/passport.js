@@ -1,5 +1,6 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook')
+const FacebookTokenStrategy = require('passport-facebook-token')
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const LineStrategy = require('passport-line-auth')
@@ -15,8 +16,7 @@ const { User } = require('../models')
 passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
-},
-async (email, password, cb) => {
+}, async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
     if (!user) {
@@ -34,8 +34,7 @@ async (email, password, cb) => {
   } catch (err) {
     return cb(err, false)
   }
-}
-))
+}))
 
 // FB驗證
 passport.use(new FacebookStrategy({
@@ -43,6 +42,26 @@ passport.use(new FacebookStrategy({
   clientSecret: process.env.FACEBOOK_SECRET,
   callbackURL: process.env.FACEBOOK_CALLBACK,
   profileFields: ['email', 'displayName']
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: { email } })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
+  } catch (err) {
+    cb(err)
+  }
+})
+)
+
+// FB token 驗證
+passport.use(new FacebookTokenStrategy({
+  clientID: process.env.FACEBOOK_ID,
+  clientSecret: process.env.FACEBOOK_SECRET,
+  fbGraphVersion: 'v3.0'
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
     const { name, email } = profile._json

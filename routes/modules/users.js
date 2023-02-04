@@ -9,4 +9,7 @@ router.post('/orders', OrderValidator, authenticated, authenticatedUser, userCon
 // 訂單查詢
 router.get('/orders', authenticated, authenticatedUser, userController.getOrders)
 
+// 確認token是否存在
+router.get('/token', authenticated, userController.getUserTokenStatus)
+
 module.exports = router
