@@ -15,13 +15,12 @@ router.get(
     session: false,
     failureRedirect: '/api/auth/bad'
   }), (req, res) => {
-    console.log('loginUser:', req.user.dataValues)
     res.redirect('/api/auth/success')
-    const loginUser = req.user.dataValues
-    delete loginUser.password
-    delete loginUser.id
-    const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
-    return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+    // const loginUser = req.user.dataValues
+    // delete loginUser.password
+    // delete loginUser.id
+    // const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    // return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
   }
 )
 
@@ -38,6 +37,7 @@ router.post('/facebook/token',
 )
 
 // 原始做法的重新導向測試
+//  '/facebook/callback'回傳的user資訊裡面有token。使用這個token會經由middleware/auth/authenticated，進入passport jwt解析驗證，再回到authenticated。由於解析完畢之後，會攜帶密碼，故在middleware/auth/authenticated將密碼移除。如果不加authenticated，拿不到使用者資料。但此處再產生一個token的必要性?
 router.get('/success', authenticated, (req, res) => {
   const user = req.user
   delete user.password
