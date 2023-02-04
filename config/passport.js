@@ -45,7 +45,10 @@ passport.use(new FacebookStrategy({
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
     const { name, email } = profile._json
-    const user = await User.findOne({ where: { email } })
+    const user = await User.findOne({ where: { email }, raw: true })
+    const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+    user.token = token
+    delete user.password
     if (user) return cb(null, user)
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
