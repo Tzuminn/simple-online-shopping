@@ -1,5 +1,6 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook')
+const FacebookTokenStrategy = require('passport-facebook-token')
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const LineStrategy = require('passport-line-auth')
@@ -45,15 +46,30 @@ passport.use(new FacebookStrategy({
   try {
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
-    const token = jwt.sign(user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
-    user.dataValues.tokenA = token
-    console.log('已存在:', user)
     if (user) return cb(null, user)
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
     const userRegistered = await User.create({ name, email, password })
-    const tokenB = 'asdf'
-    console.log('新註冊:', userRegistered, tokenB)
+    return cb(null, userRegistered)
+  } catch (err) {
+    cb(err)
+  }
+})
+)
+
+// FB token 驗證
+passport.use(new FacebookTokenStrategy({
+  clientID: process.env.FACEBOOK_ID,
+  clientSecret: process.env.FACEBOOK_SECRET,
+  fbGraphVersion: 'v3.0'
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: { email } })
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    const userRegistered = await User.create({ name, email, password })
     return cb(null, userRegistered)
   } catch (err) {
     cb(err)

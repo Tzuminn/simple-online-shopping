@@ -17,22 +17,34 @@ router.get(
   }), (req, res) => {
     console.log('loginUser:', req.user.dataValues)
     res.redirect('/api/auth/success')
-    // const loginUser = req.user.dataValues
-    // delete loginUser.password
-    // delete loginUser.id
-    // const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
-    // return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+    const loginUser = req.user.dataValues
+    delete loginUser.password
+    delete loginUser.id
+    const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
   }
 )
+
+// FB TOKEN
+router.post('/facebook/token',
+  passport.authenticate('facebook-token'), (req, res) => {
+    console.log('token驗證:', req.user)
+    const loginUser = req.user.dataValues
+    delete loginUser.password
+    delete loginUser.id
+    const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+  }
+)
+
+// 原始做法的重新導向測試
 router.get('/success', authenticated, (req, res) => {
-  // console.log('text1:', req.headers)
-  console.log('test:', req.user)
   const user = req.user
-  // res.send('success')
-  // const loginUser = req.user.dataValues
-  // const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
-  return res.status(200).json({ status: 'success', user })
+  delete user.password
+  const token = jwt.sign(req.user, process.env.JWT_SECRET, { expiresIn: '20d' })
+  return res.status(200).json({ status: 'success', data: { token, user } })
 })
+
 router.get(
   '/google',
   passport.authenticate('google', { scope: ['email', 'profile'] })
