@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../../config/passport')
 const jwt = require('jsonwebtoken')
+const { authenticated } = require('../../middleware/auth')
 
 router.get(
   '/facebook',
@@ -14,6 +15,8 @@ router.get(
     session: false,
     failureRedirect: '/api/auth/bad'
   }), (req, res) => {
+    console.log('loginUser:', req.user.dataValues)
+    res.redirect('/api/auth/success')
     const loginUser = req.user.dataValues
     delete loginUser.password
     delete loginUser.id
@@ -21,6 +24,26 @@ router.get(
     return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
   }
 )
+
+// FB TOKEN
+router.post('/facebook/token',
+  passport.authenticate('facebook-token'), (req, res) => {
+    console.log('token驗證:', req.user)
+    const loginUser = req.user.dataValues
+    delete loginUser.password
+    delete loginUser.id
+    const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+  }
+)
+
+// 原始做法的重新導向測試
+router.get('/success', authenticated, (req, res) => {
+  const user = req.user
+  delete user.password
+  const token = jwt.sign(req.user, process.env.JWT_SECRET, { expiresIn: '20d' })
+  return res.status(200).json({ status: 'success', data: { token, user } })
+})
 
 router.get(
   '/google',
