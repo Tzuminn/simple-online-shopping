@@ -158,7 +158,7 @@ const adminController = {
   },
   getOrder: async (req, res, next) => {
     try {
-      const orderNumber = req.query.id
+      const orderNumber = req.query.orderNumber
       const user = await Order.findOne({
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
