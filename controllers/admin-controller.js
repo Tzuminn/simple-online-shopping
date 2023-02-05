@@ -23,7 +23,6 @@ const adminController = {
     try {
       const theProductId = req.params.id
       const { name, price, description, CategoryId } = req.body
-      console.log(price.trim())
       if (!name.trim() || !price.trim() || !description.trim() || !CategoryId.trim()) throw new Error('所有資料都是必填')
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
