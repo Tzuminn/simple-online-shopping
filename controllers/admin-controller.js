@@ -23,7 +23,8 @@ const adminController = {
     try {
       const theProductId = req.params.id
       const { name, price, description, CategoryId } = req.body
-      if (!name.trim() || !price.trim() || !description.trim() || !CategoryId.trim()) throw new Error('所有資料都是必填')
+      if (!name || !price || !description || !CategoryId) throw new Error('所有資料都是必填')
+      // if (!name.trim() || !price.trim() || !description.trim() || !CategoryId.trim()) throw new Error('所有資料都是必填')
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
       const updatedProduct = await theProduct.update({
@@ -163,8 +164,8 @@ const adminController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
