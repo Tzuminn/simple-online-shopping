@@ -19,7 +19,8 @@ module.exports = {
         description: style[Math.floor(i % 4)],
         created_at: new Date(),
         updated_at: new Date(),
-        Category_id: categories[Math.floor(i / 10)].id
+        Category_id: categories[Math.floor(i / 10)].id,
+        is_on_shelves: 1
       })), {})
   },
   async down (queryInterface, Sequelize) {
