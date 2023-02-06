@@ -22,19 +22,12 @@ const adminController = {
   putProduct: async (req, res, next) => {
     try {
       const theProductId = req.params.id
-      const name = req.body.name ? req.body.name.trim() : ''
-      const price = req.body.name ? req.body.price.trim() : ''
-      const description = req.body.name ? req.body.description.trim() : ''
-      const CategoryId = req.body.name ? req.body.CategoryId.trim() : ''
-      const trimLength = name.length * price.length * description.length * CategoryId.length
-      if (!name || !price || !description || !CategoryId || !trimLength) throw new Error('所有資料都是必填')
+      const price = req.body.price ? req.body.price.trim().length : 0
+      if (!price) throw new Error('所有資料都是必填')
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
       const updatedProduct = await theProduct.update({
-        name,
-        price,
-        description,
-        CategoryId
+        price
       })
       const updatedProductData = updatedProduct.toJSON()
 
