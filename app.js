@@ -7,6 +7,15 @@ const cors = require('cors')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
+const { MessengerClient } = require('messaging-api-messenger')
+
+const client = new MessengerClient({
+  pageID: process.env.FACEBOOK_PAGE_ID,
+  accessToken: process.env.FACEBOOK_ACCESS_TOKEN,
+  appId: process.env.FACEBOOK_ID,
+  appSecret: process.env.FACEBOOK_SECRET,
+  version: '6.0'
+})
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
