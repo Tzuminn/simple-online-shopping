@@ -26,12 +26,13 @@ router.get(
 
 // FB TOKEN
 router.post('/facebook/token',
-  passport.authenticate('facebook-token'), (req, res) => {
-    console.log('token驗證:', req.user)
+  passport.authenticate('facebook-token', {
+    session: false
+  }), (req, res) => {
     const loginUser = req.user.dataValues
     delete loginUser.password
-    delete loginUser.id
     const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
+    // console.log('token驗證:', req.user.dataValues)
     return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
   }
 )

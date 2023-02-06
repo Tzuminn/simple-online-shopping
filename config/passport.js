@@ -46,13 +46,25 @@ passport.use(new FacebookStrategy({
   try {
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email }, raw: true })
-    const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
-    user.token = token
-    delete user.password
-    if (user) return cb(null, user)
+    // const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+    // user.token = token
+    // delete user.password
+    // console.log(accessToken)
+    // if (user) return cb(null, user)
+    if (user) {
+      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+      user.token = token
+      delete user.password
+      console.log('existUsersToken:', accessToken)
+      return cb(null, user)
+    }
     const randomPassword = Math.random.toString(36).slice(-8)
     const password = await bcrypt.hash(randomPassword, 10)
     const userRegistered = await User.create({ name, email, password })
+    const newToken = jwt.sign(userRegistered.toJSON(), process.env.JWT_SECRET, { expiresIn: '20d' })
+    userRegistered.token = newToken
+    delete userRegistered.password
+    console.log('newUsersToken:', accessToken)
     return cb(null, userRegistered)
   } catch (err) {
     cb(err)
