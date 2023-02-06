@@ -1,5 +1,6 @@
 const passport = require('passport')
 const FacebookStrategy = require('passport-facebook')
+const FacebookTokenStrategy = require('passport-facebook-token')
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const LineStrategy = require('passport-line-auth')
@@ -13,19 +14,27 @@ const { User } = require('../models')
 
 // 本地驗證
 passport.use(new LocalStrategy({
-  usernameField: 'email', passReqToCallback: true
+  usernameField: 'email',
+  passwordField: 'password'
 }, async (email, password, cb) => {
   try {
     const user = await User.findOne({ where: { email } })
-    if (!user) throw new Error('帳號不存在!')
+    if (!user) {
+      const err = new Error('帳號或密碼錯誤!')
+      err.status = 401
+      throw err
+    }
     const passwordChecked = await bcrypt.compare(password, user.password)
-    if (!passwordChecked) throw new Error('帳號或密碼錯誤!')
+    if (!passwordChecked) {
+      const err = new Error('帳號或密碼錯誤!')
+      err.status = 401
+      throw err
+    }
     return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err, false)
   }
-}
-))
+}))
 
 // FB驗證
 passport.use(new FacebookStrategy({
@@ -35,8 +44,29 @@ passport.use(new FacebookStrategy({
   profileFields: ['email', 'displayName']
 }, async (accessToken, refreshToken, profile, cb) => {
   try {
-    // accessToken不確定是否要傳去前端
-    // 登入錯誤的訊息?
+    const { name, email } = profile._json
+    const user = await User.findOne({ where: { email }, raw: true })
+    const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+    user.token = token
+    delete user.password
+    if (user) return cb(null, user)
+    const randomPassword = Math.random.toString(36).slice(-8)
+    const password = await bcrypt.hash(randomPassword, 10)
+    const userRegistered = await User.create({ name, email, password })
+    return cb(null, userRegistered)
+  } catch (err) {
+    cb(err)
+  }
+})
+)
+
+// FB token 驗證
+passport.use(new FacebookTokenStrategy({
+  clientID: process.env.FACEBOOK_ID,
+  clientSecret: process.env.FACEBOOK_SECRET,
+  fbGraphVersion: 'v3.0'
+}, async (accessToken, refreshToken, profile, cb) => {
+  try {
     const { name, email } = profile._json
     const user = await User.findOne({ where: { email } })
     if (user) return cb(null, user)
@@ -108,7 +138,7 @@ passport.use(new JwtStrategy(jwtOptions, async (jwtPayload, cb) => {
     const user = await User.findByPk(jwtPayload.id)
     if (user) return cb(null, user)
   } catch (err) {
-    cb(err)
+    return cb(err, false)
   }
 }))
 

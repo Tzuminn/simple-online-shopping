@@ -1,16 +1,18 @@
 const express = require('express')
 const router = express.Router()
 
-// const adminController = require('../../controllers/admin-controller')
-// const authenticatedAdmin = require('../../middleware/auth')
+const upload = require('../../middleware/multer')
+const passport = require('../../config/passport')
+const adminController = require('../../controllers/admin-controller')
+const { authenticated, authenticatedAdmin } = require('../../middleware/auth')
 
-// router.post('/login', adminController.login)
+router.post('/login', passport.authenticate('local', { session: false }), adminController.login)
 
-// router.put('/products/edit/:id', authenticatedAdmin, adminController.putProduct)
-// router.delete('/products/delete/:id', authenticatedAdmin, adminController.deleteProduct)
-// router.get('/products', authenticatedAdmin, adminController.getProducts)
-// router.post('/products', authenticatedAdmin, adminController.postProduct)
+router.put('/products/edit/:id', authenticated, authenticatedAdmin, adminController.putProduct)
+router.delete('/products/delete/:id', authenticated, authenticatedAdmin, adminController.deleteProduct)
+router.post('/products', authenticated, authenticatedAdmin, upload.array('url', 6), adminController.postProduct)
 
-// router.get('/orders ', authenticatedAdmin, adminController.getOrders)
+router.get('/orders', authenticated, authenticatedAdmin, adminController.getOrders)
+router.get('/detail/', authenticated, authenticatedAdmin, adminController.getOrder)
 
 module.exports = router
