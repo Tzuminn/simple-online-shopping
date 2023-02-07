@@ -22,7 +22,7 @@ const adminController = {
   putProduct: async (req, res, next) => {
     try {
       const theProductId = req.params.id
-      const price = req.body.price ? req.body.price.trim().length : 0
+      const price = req.body.price ? req.body.price.trim() : 0
       if (!price) throw new Error('所有資料都是必填')
       const theProduct = await Product.findByPk(theProductId)
       if (!theProduct) throw new Error('此產品不存在!')
