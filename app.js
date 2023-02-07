@@ -4,6 +4,9 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const session = require('express-session')
 const cors = require('cors')
+const routes = require('./routes')
+const app = express()
+const port = process.env.PORT || 3000
 
 const line = require('@line/bot-sdk')
 const { Configuration, OpenAIApi } = require('openai')
@@ -41,10 +44,6 @@ async function handleEvent (event) {
   // use reply API
   return client.replyMessage(event.replyToken, echo)
 }
-
-const routes = require('./routes')
-const app = express()
-const port = process.env.PORT || 3000
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
