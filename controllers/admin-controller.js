@@ -52,9 +52,12 @@ const adminController = {
     }
   },
   postProduct: async (req, res, next) => {
-    try {
-      const { name, price, description, CategoryId } = req.body
-      if (!name.trim() || !price.trim() || !description.trim() || !CategoryId.trim()) throw new Error('所有資料都是必填')
+    try {      
+      const name = req.body.name ? req.body.name.trim() : 0
+      const price = req.body.price ? req.body.price.trim() : 0
+      const description = req.body.description ? req.body.description.trim() : 0
+      const CategoryId = req.body.CategoryId ? req.body.CategoryId.trim() : 0
+      if (!name || !price || !description || !CategoryId) throw new Error('所有資料都是必填')
       const newProduct = await Product.create({
         name,
         price,
