@@ -21,6 +21,9 @@ router.post('/messaging', (req, res) => {
   const event = req.body.entry[0].messaging[0]
   const userId = event.sender.id
   const { text } = event.message
+  console.log('event:', event)
+  console.log('userId:', userId)
+  console.log('text:', text)
   client.sendText(userId, text)
   res.sendStatus(200)
 })
