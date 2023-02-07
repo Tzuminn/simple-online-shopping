@@ -11,7 +11,7 @@ const productController = {
           { model: Category, attributes: ['id', 'name'] },
           { model: Image, attributes: ['id', 'ProductId', 'url', 'isCover'], where: { isCover: true } }
         ],
-        attributes: ['id', 'name', 'price', [sequelize.literal('(SELECT IFNULL(SUM(order_quantity),0) FROM OrderDetails WHERE Product_id = Product.id )'), 'sales']],
+        attributes: ['id', 'name', 'price', 'isOnShelves', [sequelize.literal('(SELECT IFNULL(SUM(order_quantity),0) FROM OrderDetails WHERE Product_id = Product.id )'), 'sales']],
         order: [[sequelize.literal('sales'), 'DESC'], ['id', 'DESC']],
         displayLimit,
         offset,
@@ -32,7 +32,7 @@ const productController = {
           { model: Category, attributes: ['id', 'name'] },
           { model: Image, attributes: ['id', 'ProductId', 'url', 'isCover'], where: { isCover: true } }
         ],
-        attributes: ['id', 'name', 'price', 'createdAt'],
+        attributes: ['id', 'name', 'price', 'createdAt', 'isOnShelves'],
         order: [['createdAt', 'DESC'], ['id', 'DESC']],
         displayLimit,
         offset,
@@ -53,7 +53,7 @@ const productController = {
           { model: Category, attributes: ['id', 'name'] },
           { model: Image, attributes: ['id', 'ProductId', 'url', 'isCover'], where: { isCover: true } }
         ],
-        attributes: ['id', 'name', 'price'],
+        attributes: ['id', 'name', 'price', 'isOnShelves'],
         order: [['price', 'DESC'], ['id', 'DESC']],
         displayLimit,
         offset,
