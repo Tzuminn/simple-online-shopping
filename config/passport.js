@@ -87,6 +87,7 @@ passport.use(new FacebookTokenStrategy({
     const userRegistered = await User.create({ name, email, password })
     return cb(null, userRegistered)
   } catch (err) {
+    console.log('12err3:', err)
     cb(err)
   }
 })

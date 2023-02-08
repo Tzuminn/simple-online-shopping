@@ -119,8 +119,8 @@ const adminController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })

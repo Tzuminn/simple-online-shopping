@@ -6,7 +6,9 @@ const { authenticated } = require('../../middleware/auth')
 
 router.get(
   '/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'public_profile'] })
+  passport.authenticate('facebook', { scope: ['email', 'public_profile'] }), (req, res) => {
+    console.log()
+  }
 )
 
 router.get(
@@ -25,15 +27,29 @@ router.get(
 )
 
 // FB TOKEN
-router.post('/facebook/token',
+router.get('/facebook/token',
   passport.authenticate('facebook-token', {
-    session: false
-  }), (req, res) => {
+    session: false,
+    failureRedirect: '/api/auth/bad'
+  }), async (req, res, next) => {
+    // try {
+    console.log(req)
+    if (!req.user) {
+      console.log('123fail')
+    }
+    if (req.user.err) {
+      res.status(401).json({
+        success: false,
+        message: 'Auth failed',
+        error: req.user.err
+      })
+    }
     const loginUser = req.user.dataValues
     delete loginUser.password
     const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
     // console.log('token驗證:', req.user.dataValues)
     return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+    // }
   }
 )
 
