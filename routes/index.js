@@ -6,6 +6,7 @@ const products = require('./modules/products')
 const blogs = require('./modules/blogs')
 const auth = require('./modules/auth')
 const messaging = require('./modules/messaging')
+const FB = require('./modules/FB')
 const { generalErrorHandler } = require('../middleware/error-handler')
 
 router.get('/fbtest', (req, res) => {
@@ -49,6 +50,7 @@ router.use('/products', products)
 router.use('/blogs', blogs)
 router.use('/auth', auth)
 router.use('/chatbot', messaging)
+router.use('/test', FB)
 
 router.use('/', (_, res, next) => {
   res.status(404).json({

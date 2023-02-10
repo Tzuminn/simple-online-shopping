@@ -52,7 +52,7 @@ const adminController = {
     }
   },
   postProduct: async (req, res, next) => {
-    try {      
+    try {
       const name = req.body.name ? req.body.name.trim() : 0
       const price = req.body.price ? req.body.price.trim() : 0
       const description = req.body.description ? req.body.description.trim() : 0
