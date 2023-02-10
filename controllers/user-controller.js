@@ -1,5 +1,7 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { transporter } = require('../middleware/sendEmail')
 
@@ -100,6 +102,25 @@ const userController = {
   },
   getUserTokenStatus: async (_, res) => {
     res.status(200).json({ status: 'success' })
+  },
+  usersLogin: async (req, res, next) => {
+    try {
+      const { name, email } = req.body
+      const user = await User.findOne({ where: { email }, raw: true })
+      if (user) {
+        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+        delete user.password
+        return res.status(200).json({ status: 'success', data: { token, user } })
+      }
+      const randomPassword = Math.random.toString(36).slice(-8)
+      const password = await bcrypt.hash(randomPassword, 10)
+      const userRegistered = await User.create({ name, email, password })
+      const newToken = jwt.sign(userRegistered.toJSON(), process.env.JWT_SECRET, { expiresIn: '20d' })
+      delete userRegistered.password
+      return res.status(200).json({ status: 'success', data: { newToken, user } })
+    } catch (err) {
+      next(err)
+    }
   }
 }
 module.exports = userController
