@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('../../config/passport')
-const jwt = require('jsonwebtoken')
-const { authenticated } = require('../../middleware/auth')
+// const passport = require('../../config/passport')
+// const jwt = require('jsonwebtoken')
+// const { authenticated } = require('../../middleware/auth')
 
 // // const client_id = process.env.FACEBOOK_ID
 // // const client_secret = process.env.FACEBOOK_SECRET

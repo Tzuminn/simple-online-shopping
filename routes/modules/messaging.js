@@ -23,8 +23,7 @@ router.post('/messaging', (req, res) => {
   const { text } = event.message
   if (text.includes('測試') && text.endsWith('?')) {
     res.status(200).json('請問是要詢問測試嗎?')
-  }
-  else {
+  } else {
     res.status(200).json('請再輸入一遍您的問題。')
   }
   // client.sendText(userId, text)
