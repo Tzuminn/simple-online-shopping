@@ -4,36 +4,86 @@ const passport = require('../../config/passport')
 const jwt = require('jsonwebtoken')
 const { authenticated } = require('../../middleware/auth')
 
-router.get(
-  '/facebook',
-  passport.authenticate('facebook', { scope: ['email', 'public_profile'] }), (req, res) => {
-    console.log()
+router.get('/facebook', function (req, res, next) {
+  const facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
+    'redirect_uri=http://localhost:3000/api/auth/facebook/callback' +
+    '&client_id=' + process.env.FACEBOOK_ID +
+    '&scope=public_profile' +
+    '&response_type=code'
+  console.log('facebook_oauth_url:', facebook_oauth_url)
+  // res.send(JSON.stringify({ redirect_url: facebook_oauth_url }))
+  res.redirect(facebook_oauth_url)
+})
+router.get('/facebook/callback', function (req, res, next) {
+  const code = req.query.code
+  console.log('code:', code)
+  const token_option = {
+    url: 'https://graph.facebook.com/v2.3/oauth/access_token?' +
+      'client_id=' + process.env.FACEBOOK_ID +
+      '&client_secret=' + process.env.FACEBOOK_SECRET +
+      '&code=' + code +
+      '&redirect_uri=' + 'http://local.example.com:3000/facebook/callback',
+    method: 'GET'
   }
-)
+  console.log('token_option:', token_option)
+  // facebook_console_id參考附著
+  // request(token_option, function (err, resposne, body) {
+  //   const access_token = JSON.parse(body).access_token
+  //   console.log('access_token:', access_token)
+  //   const info_option = {
+  //     url: 'https://graph.facebook.com/debug_token?' +
+  //       'input_token=' + access_token +
+  //       '&access_token=' + facebook_console_id,
+  //     method: 'GET'
+  //   }
+  //   // Keep the user_id in DB as uni-key
+  //   request(info_option, function (err, response, body) {
+  //     if (err) {
+  //       res.send(err)
+  //     }
 
-router.get(
-  '/facebook/callback',
-  passport.authenticate('facebook', {
-    session: false,
-    failureRedirect: '/api/auth/bad'
-  }), (req, res) => {
-    res.redirect('/api/auth/success')
-    // const loginUser = req.user.dataValues
-    // delete loginUser.password
-    // delete loginUser.id
-    // const token = jwt.sign(req.user.dataValues, process.env.JWT_SECRET, { expiresIn: '20d' })
-    // return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
-  }
-)
+  //     // Get user info
+  //     request({ url: 'https://graph.facebook.com/me?access_token=' + access_token }, function (err, response, body) {
+  //       if (err) {
+  //         res.send(err)
+  //       } else {
+  //         console.log('body:', body)
+  //         res.send(body)
+  //       }
+  //     })
+  //   })
+  // })
+  console.log('req:', request(token_option))
+})
+
+// router.get(
+//   '/facebook',
+//   passport.authenticate('facebook', { scope: ['email', 'public_profile'] }), (req, res) => {
+//   }
+// )
+
+// router.get(
+//   '/facebook/callback',
+//   passport.authenticate('facebook', {
+//     session: false,
+//     failureRedirect: '/api/auth/bad'
+//   }), (req, res) => {
+//     // res.redirect('/api/auth/success')
+//     console.log(req.query)
+//     const loginUser = req.user
+//     const token = jwt.sign(loginUser, process.env.JWT_SECRET, { expiresIn: '20d' })
+//     return res.status(200).json({ status: 'success', data: { token, user: loginUser } })
+//   }
+// )
 
 // FB TOKEN
 router.get('/facebook/token',
   passport.authenticate('facebook-token', {
-    session: false,
-    failureRedirect: '/api/auth/bad'
+    session: false
+    // failureRedirect: '/api/auth/bad'
   }), async (req, res, next) => {
     // try {
-    console.log(req)
+    console.log('tokenreq:', req)
     if (!req.user) {
       console.log('123fail')
     }

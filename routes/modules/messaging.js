@@ -21,8 +21,14 @@ router.post('/messaging', (req, res) => {
   const event = req.body.entry[0].messaging[0]
   const userId = event.sender.id
   const { text } = event.message
-  client.sendText(userId, text)
-  res.sendStatus(200)
+  if (text.includes('測試') && text.endsWith('?')) {
+    res.status(200).json('請問是要詢問測試嗎?')
+  }
+  else {
+    res.status(200).json('請再輸入一遍您的問題。')
+  }
+  // client.sendText(userId, text)
+  // res.sendStatus(200)
 })
 
 module.exports = router
