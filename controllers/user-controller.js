@@ -72,8 +72,8 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
@@ -109,15 +109,17 @@ const userController = {
       const user = await User.findOne({ where: { email }, raw: true })
       if (user) {
         const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+        console.log('user:', user)
         delete user.password
-        return res.status(200).json({ status: 'success', data: { token, user } })
+        return res.status(200).json({ status: 'success login!', data: { token, user } })
       }
       const randomPassword = Math.random.toString(36).slice(-8)
       const password = await bcrypt.hash(randomPassword, 10)
-      const userRegistered = await User.create({ name, email, password })
+      let userRegistered = await User.create({ name, email, password })
       const newToken = jwt.sign(userRegistered.toJSON(), process.env.JWT_SECRET, { expiresIn: '20d' })
+      userRegistered = userRegistered.dataValues
       delete userRegistered.password
-      return res.status(200).json({ status: 'success', data: { newToken, user } })
+      return res.status(200).json({ status: 'success registered!', data: { token: newToken, user: userRegistered } })
     } catch (err) {
       next(err)
     }
