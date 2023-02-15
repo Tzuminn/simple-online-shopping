@@ -6,6 +6,7 @@ const authenticated = (req, res, next) => {
     if (!user) return res.status(401).json({ status: 'error', message: 'Unauthorized' })
     if (err) return next(err)
     req.user = user.dataValues
+    delete req.user.password
     next()
   })(req, res, next)
 }

@@ -1,5 +1,7 @@
 const { User, Order, OrderDetail, Product, sequelize, Payment, Delivery } = require('../models')
 const dayjs = require('dayjs')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { transporter } = require('../middleware/sendEmail')
 
@@ -70,8 +72,8 @@ const userController = {
         where: { orderNumber },
         attributes: { exclude: ['PaymentId', 'DeliveryId', 'UserId'] },
         include: [{ model: User, attributes: ['name'] },
-          { model: Payment, attributes: ['type'] },
-          { model: Delivery, attributes: ['type'] }],
+        { model: Payment, attributes: ['type'] },
+        { model: Delivery, attributes: ['type'] }],
         raw: true,
         nest: true
       })
@@ -94,6 +96,30 @@ const userController = {
       })
       user.products = products
       return res.status(200).json(user)
+    } catch (err) {
+      next(err)
+    }
+  },
+  getUserTokenStatus: async (_, res) => {
+    res.status(200).json({ status: 'success' })
+  },
+  usersLogin: async (req, res, next) => {
+    try {
+      const { name, email } = req.body
+      const user = await User.findOne({ where: { email }, raw: true })
+      if (user) {
+        const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '20d' })
+        console.log('user:', user)
+        delete user.password
+        return res.status(200).json({ status: 'success login!', data: { token, user } })
+      }
+      const randomPassword = Math.random.toString(36).slice(-8)
+      const password = await bcrypt.hash(randomPassword, 10)
+      let userRegistered = await User.create({ name, email, password })
+      const newToken = jwt.sign(userRegistered.toJSON(), process.env.JWT_SECRET, { expiresIn: '20d' })
+      userRegistered = userRegistered.dataValues
+      delete userRegistered.password
+      return res.status(200).json({ status: 'success registered!', data: { token: newToken, user: userRegistered } })
     } catch (err) {
       next(err)
     }
