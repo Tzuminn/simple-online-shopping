@@ -1,12 +1,13 @@
 # 簡易購物網站(復刻毛孩時代網站)
-提供API給[https://github.com/BearK0515/pets-store](pets-store)使用
+提供API給[pets-store](https://github.com/BearK0515/pets-store)使用
+
+## 專案功能
+
+[專案功能及DEMO](https://github.com/BearK0515/pets-store)
 
 ## 開發環境
 1. Node.js v14.16.0
 2. mySQL v8.0.31
-
-## 專案照片
-
 
 ## Installing - 專案安裝流程(本地端使用)
 
@@ -101,8 +102,12 @@ npm run dev
 
 ## API文件
 
-API文件 https://bee3048.docs.apiary.io/#reference
+[API文件](https://bee3048.docs.apiary.io/#reference)
+
+## 佈署平台
+
+AWS Elastic Beanstalk
 
 ## 開發人組 
 
-Joy、MIN、Waylin
+[Joy](https://github.com/JoyWanddrr)、[MIN](https://github.com/Tzuminn)、[Waylin](https://github.com/linway035)
